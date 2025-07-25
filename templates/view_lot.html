@@ -1,0 +1,67 @@
+{% extends "base.html" %} {% block title %}View Lot - {{ lot[1] }}{% endblock %}
+{% block content %}
+<div style="margin-bottom: 2rem">
+  <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline"
+    >← Back to Dashboard</a
+  >
+</div>
+
+<div class="card">
+  <h2>{{ lot[1] }}</h2>
+  <p><strong>Address:</strong> {{ lot[3] }}, {{ lot[4] }}</p>
+  <p><strong>Price per Hour:</strong> ₹{{ "%.2f"|format(lot[2]) }}</p>
+  <p><strong>Total Spots:</strong> {{ lot[5] }}</p>
+</div>
+
+<div class="card">
+  <h3>Parking Spots Status</h3>
+  <div class="spot-grid">
+    {% for spot in spots %}
+    <div
+      class="spot {{ 'occupied' if spot[1] == 'O' else 'available' }}"
+      title="Spot {{ spot[0] }}{% if spot[1] == 'O' %} - {{ spot[2] }} ({{ spot[3] }}){% endif %}"
+    >
+      {{ spot[0] }}
+    </div>
+    {% endfor %}
+  </div>
+
+  <div style="margin-top: 1rem">
+    <div style="display: flex; gap: 2rem; align-items: center">
+      <div style="display: flex; align-items: center; gap: 0.5rem">
+        <div class="spot available" style="width: 20px; height: 20px"></div>
+        <span>Available</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 0.5rem">
+        <div class="spot occupied" style="width: 20px; height: 20px"></div>
+        <span>Occupied</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if spots %}
+<div class="card">
+  <h3>Detailed Status</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Spot #</th>
+        <th>Status</th>
+        <th>User</th>
+        <th>Parked Since</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for spot in spots %}
+      <tr>
+        <td>{{ spot[0] }}</td>
+        <td>{{ 'Occupied' if spot[1] == 'O' else 'Available' }}</td>
+        <td>{{ spot[2] or '-' }}</td>
+        <td>{{ spot[3] or '-' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %} {% endblock %}

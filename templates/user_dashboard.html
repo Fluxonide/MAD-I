@@ -1,0 +1,76 @@
+{% extends "base.html" %} {% block title %}User Dashboard - Parking App{%
+endblock %} {% block content %}
+<h2>User Dashboard</h2>
+
+{% if current_reservations %}
+<div class="card">
+  <h3>Your Current Parking</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Location</th>
+        <th>Spot #</th>
+        <th>Parked Since</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for reservation in current_reservations %}
+      <tr>
+        <td>{{ reservation[6] }}</td>
+        <td>{{ reservation[5] }}</td>
+        <td>{{ reservation[3] }}</td>
+        <td>
+          <a
+            href="{{ url_for('release_spot', reservation_id=reservation[0]) }}"
+            class="btn"
+            onclick="return confirm('Release this parking spot?')"
+          >
+            Release Spot
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+<div class="card">
+  <h3>Available Parking Lots</h3>
+  {% if available_lots %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Location</th>
+        <th>Price/Hour</th>
+        <th>Address</th>
+        <th>Available Spots</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for lot in available_lots %}
+      <tr>
+        <td>{{ lot[1] }}</td>
+        <td>₹{{ "%.2f"|format(lot[2]) }}</td>
+        <td>{{ lot[3] }}, {{ lot[4] }}</td>
+        <td>{{ lot[7] or 0 }}</td>
+        <td>
+          {% if not current_reservations %}
+          <a href="{{ url_for('book_spot', lot_id=lot[0]) }}" class="btn"
+            >Book Spot</a
+          >
+          {% else %}
+          <span style="color: #666">Release current spot first</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>No parking lots available at the moment.</p>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends "base.html" %} {% block title %}Admin Dashboard - Parking App{%
+endblock %} {% block content %}
+<h2>Admin Dashboard</h2>
+
+<div class="dashboard-grid">
+  <div class="card">
+    <h3>Quick Stats</h3>
+    <p>Total Users: {{ total_users }}</p>
+    <p>Total Parking Lots: {{ lots|length }}</p>
+    <p>
+      Total Spots: {% set total_spots = 0 %}{% for lot in lots %}{% set
+      total_spots = total_spots + (lot[6] or 0) %}{% endfor %}{{ total_spots }}
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>Add New Parking Lot</h3>
+    <form method="POST" action="{{ url_for('create_lot') }}">
+      <div class="form-group">
+        <label>Location Name:</label>
+        <input type="text" name="location_name" required />
+      </div>
+      <div class="form-group">
+        <label>Price per Hour:</label>
+        <input type="number" name="price" step="0.01" required />
+      </div>
+      <div class="form-group">
+        <label>Address:</label>
+        <input type="text" name="address" required />
+      </div>
+      <div class="form-group">
+        <label>Pin Code:</label>
+        <input type="text" name="pin_code" required />
+      </div>
+      <div class="form-group">
+        <label>Number of Spots:</label>
+        <input type="number" name="max_spots" min="1" required />
+      </div>
+      <button type="submit" class="btn">Create Lot</button>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Parking Lots Management</h3>
+  {% if lots %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Location</th>
+        <th>Price/Hour</th>
+        <th>Address</th>
+        <th>Pin Code</th>
+        <th>Total Spots</th>
+        <th>Available</th>
+        <th>Occupied</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for lot in lots %}
+      <tr>
+        <td>{{ lot[0] }}</td>
+        <td>{{ lot[1] }}</td>
+        <td>₹{{ "%.2f"|format(lot[2]) }}</td>
+        <td>{{ lot[3] }}</td>
+        <td>{{ lot[4] }}</td>
+        <td>{{ lot[6] or 0 }}</td>
+        <td>{{ lot[7] or 0 }}</td>
+        <td>{{ lot[8] or 0 }}</td>
+        <td>
+          <a
+            href="{{ url_for('view_lot', lot_id=lot[0]) }}"
+            class="btn btn-outline"
+            >View</a
+          >
+          {% if lot[8] == 0 %}
+          <a
+            href="{{ url_for('delete_lot', lot_id=lot[0]) }}"
+            class="btn"
+            onclick="return confirm('Are you sure?')"
+            >Delete</a
+          >
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>No parking lots created yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

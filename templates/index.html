@@ -1,0 +1,25 @@
+{% extends "base.html" %} {% block content %}
+<div style="text-align: center; margin: 4rem 0">
+  <h2>Welcome to Parking Management System</h2>
+  <p style="margin: 2rem 0">Simple and efficient parking spot management</p>
+
+  {% if not session.user_id %}
+  <div style="margin: 2rem 0">
+    <a href="{{ url_for('login') }}" class="btn">Login</a>
+    <a href="{{ url_for('register') }}" class="btn btn-outline">Register</a>
+  </div>
+  {% else %}
+  <div style="margin: 2rem 0">
+    {% if session.role == 'admin' %}
+    <a href="{{ url_for('admin_dashboard') }}" class="btn"
+      >Go to Admin Dashboard</a
+    >
+    {% else %}
+    <a href="{{ url_for('user_dashboard') }}" class="btn"
+      >Go to User Dashboard</a
+    >
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
